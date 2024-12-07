@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Student Details</h1>
+
+        {% if student_found %}
+        <p><strong>Dropout Chance:</strong> {{ student_details['Scaled_Dropout_Probability'] }}</p>
+        <p><strong>Attendance:</strong> {{ student_details['current_attendance'] }}</p>
+        <p><strong>Percentage:</strong> {{ student_details['current_percentage'] }}</p>
+        <p><strong>Family Income:</strong> {{ student_details['income'] }}</p>
+        {% else %}
+        <p style="color: red;">Student not found. Please check the input.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

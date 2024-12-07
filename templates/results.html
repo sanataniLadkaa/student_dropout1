@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction Results</h1>
+
+        <!-- Links to view and download results -->
+        <p>
+            <a href="{{ chart_file }}" target="_blank">View Prediction Chart</a>
+        </p>
+        <p>
+            <a href="{{ result_file }}" download>Download Results</a>
+        </p>
+
+        <!-- Check Specific Student Details -->
+        <h3>Check Student Details</h3>
+        <form action="/get_student_details" method="post">
+            <label for="student_index">Student Index:</label>
+            <input type="number" id="student_index" name="student_index" placeholder="Enter student index">
+            <br>
+            <br>
+            
+            
+            <button type="submit">Get Student Details</button>
+        </form>
+    </div>
+</body>
+</html>
