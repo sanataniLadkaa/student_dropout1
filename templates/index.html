@@ -17,7 +17,9 @@
             <label for="file">Upload CSV File:</label>
             <input type="file" id="file" name="file" accept=".csv" required>
             <button type="submit">Upload and Predict</button>
+            <button type="button"><a href="https://indeividual-student.onrender.com/" style="color: white; text-decoration: none;">Check individual</a></button>
         </form>
+        
 
         <!-- Display Prediction Results -->
         {% if prediction_done %}
@@ -92,6 +94,27 @@
         a:hover {
             text-decoration: underline;
         }
+
+        .button-container {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    margin-top: 10px;
+}
+
+button[type="button"] {
+    background-color: #28a745; /* Green color for distinction */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button[type="button"]:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
     </style>
 </body>
 </html>
