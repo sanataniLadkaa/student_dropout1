@@ -9,8 +9,24 @@ from fastapi.staticfiles import StaticFiles
 import joblib
 from sklearn.preprocessing import LabelEncoder
 from fastapi import Request
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Add CORS middleware
+origins = [
+    "http://localhost",  # Allow localhost
+    "http://localhost:3000",  # Allow frontend app if running on port 3000
+    # Add other origins as needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allows the listed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Static files (for storing generated charts and prediction results)
 app.mount("/static", StaticFiles(directory="static"), name="static")
