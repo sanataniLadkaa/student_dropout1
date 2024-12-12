@@ -66,20 +66,49 @@ def scale_probabilities_to_10(probabilities, threshold=0.5):
     scaled[scaled > threshold] = (scaled[scaled > threshold] - threshold) / (1 - threshold) * 10
     return scaled
 
-# Function to plot the distribution of scaled probabilities
-def plot_scaled_probability_distribution(data):
-    sorted_data = data['Scaled_Dropout_Probability'].sort_values()
 
+def plot_scaled_probability_histogram(data):
+    """
+    Plot and save a histogram of scaled dropout probabilities.
+
+    Args:
+        data (pd.DataFrame): The dataset containing the column 'Scaled_Dropout_Probability'.
+        save_path (str): The path to save the generated histogram image.
+
+    Returns:
+        str: The file path of the saved histogram.
+    """
+    # Extract the scaled dropout probabilities
+    save_path="static/scaled_probability_histogram.png"
+    if 'Scaled_Dropout_Probability' not in data.columns:
+        raise ValueError("Dataframe must contain a 'Scaled_Dropout_Probability' column.")
+    
+    scaled_probabilities = data['Scaled_Dropout_Probability']
+
+    # Create the histogram
     plt.figure(figsize=(8, 5))
-    plt.plot(sorted_data.values, range(len(sorted_data)), color='blue', label='Scaled Dropout Probability')
-    plt.title('Progressive Line Graph of Scaled Dropout Probabilities', fontsize=14)
+    counts, bins, patches = plt.hist(scaled_probabilities, bins=10, color='blue', edgecolor='black', alpha=0.7)
+
+    # Add counts on top of each bar
+    for count, bin_edge in zip(counts, bins):
+        if count > 0:
+            plt.text(bin_edge + (bins[1] - bins[0]) / 2, count, int(count),
+                     ha='center', va='bottom', fontsize=10, color='black')
+
+    # Add labels, title, and grid
+    plt.title('Histogram of Scaled Dropout Probabilities', fontsize=14)
     plt.xlabel('Scaled Probability (1 to 10)', fontsize=12)
-    plt.ylabel('Index (Sorted by Probability)', fontsize=12)
-    plt.legend()
-    plt.grid(axis='x', linestyle='--', alpha=0.7)
+    plt.ylabel('Frequency', fontsize=12)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.savefig("static/prediction_chart.png")
+
+    # Save the plot to the specified path
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    plt.savefig(save_path)
     plt.close()
+
+    return save_path
+
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -89,7 +118,6 @@ async def home(request: Request):
 
 @app.post("/predict", response_class=HTMLResponse)
 async def predict(request: Request, file: UploadFile = File(...)):
-
     # Save uploaded file to a temporary location
     file_location = f"temp/{file.filename}"
     with open(file_location, "wb+") as f:
@@ -117,18 +145,19 @@ async def predict(request: Request, file: UploadFile = File(...)):
         data.to_csv(result_filename, index=False)
 
         # Plot the scaled dropout probabilities
-        plot_scaled_probability_distribution(data)
+        histogram_path = plot_scaled_probability_histogram(data)
 
         # Return the results with a flag indicating prediction is done
         return templates.TemplateResponse("results.html", {
             "request": request,
             "prediction_done": True,
             "result_file": result_filename,
-            "chart_file": "/static/prediction_chart.png"
+            "chart_file": f"/{histogram_path}"  # Correctly point to the histogram
         })
 
     except Exception as e:
         return {"error": str(e)}
+
 
 
 @app.post("/get_student_details", response_class=HTMLResponse)
@@ -166,4 +195,3 @@ async def get_student_details_endpoint(
 
     except Exception as e:
         return {"error": str(e)}
-
